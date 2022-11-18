@@ -1,0 +1,103 @@
+name: 🧐 Repo Analyzer
+
+on:
+  workflow_dispatch:
+  # Run job At 08:15 on every day-of-week from Monday through Friday.
+  schedule:
+              # https://crontab.guru/
+              #   ┌───────────── minute (0 - 59)
+              # │ ┌───────────── hour (0 - 23)
+              # │ │ ┌───────────── day of the month (1 - 31)
+              # │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+              # │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)
+              # │ │ │ │ │
+              # │ │ │ │ │
+              # │ │ │ │ │
+              # * * * * *
+    - cron:  '15 8 * * 1-5'
+
+jobs:
+  fetch_repo_url:
+    runs-on: ubuntu-latest
+    name: "⏭ Get next repo URL from queue"
+
+    steps:
+      - name: Set environment variables for repository URL found
+        run: |
+          REPOSITORY="gatsbyjs/gatsby"
+          echo "repository=${REPOSITORY}" >> $GITHUB_ENV
+  
+  repo_scan:
+    needs: [fetch_repo_url]
+    name: "🕵️‍♂️ Preform repository scan"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "🕵️‍♂️ Preform repository scan"
+        uses: open-source-crawler-test/repo-scan-test@main
+        with:
+          repository: ${{ env.repository }}
+          typo-scan-exclude-match: '[''typos/**'', ''public/**'']'
+          REPORT_ARCHIVE_OWNER: open-source-crawler-test
+          REPORT_ARCHIVE_REPO: repo-scan-archive-test
+          ARCHIVE_REPO_BRANCH_TARGET: main
+          ARCHIVE_COMMIT_EMAIL: commit-bot@gmail.com
+          ARCHIVE_REPO_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          
+  # email_notification:
+  #   needs: [fetch_repo_url, repo_scan]
+  #   name: "🔔 Send Email Notification"
+  #   runs-on: ubuntu-latest
+  #   if: always() && github.ref == 'refs/heads/main'
+  #   env:
+  #     REPO_URL: ${{ needs.fetch_repo_url.outputs.repoUrl }}
+      
+  #   steps:
+  #     - name: 🔊 Send conditional failure mail
+  #       if: ${{ (needs.security_scan.result == 'failure' && needs.typo_scan.result == 'failure') || needs.finalize_report.result == 'failure' }}
+  #       uses: dawidd6/action-send-mail@v3.7.0
+  #       with:
+  #         # mail server settings
+  #         server_address: smtp.gmail.com
+  #         server_port: 465
+  #         # user credentials
+  #         username: ${{ secrets.EMAIL_USERNAME }}
+  #         password: ${{ secrets.EMAIL_PASSWORD }}
+  #         # email subject
+  #         subject: ❌ (FAILURE) Analysis workflow - (${{ env.REPO_URL }})
+  #         # email body as text
+  #         body: |
+  #           ❌ Repo Analysis failed for: ${{ env.REPO_URL }}
+
+  #           ℹ️ Repository: https://github.com/${{ env.REPO_URL }}
+  #           🤖 Workflow: https://github.com/spencerlepine/open-source-crawler/actions/runs/${{ github.run_id }}
+  #         # comma-separated string, send email to
+  #         to: spencerlepine26@gmail.com
+  #         # from email name
+  #         from: SpencerBot
+
+  #     - name: 🔊 Send conditional success mail
+  #       if: ${{ (needs.security_scan.result == 'success' || needs.typo_scan.result == 'success') && needs.finalize_report.result == 'success' }}
+  #       uses: dawidd6/action-send-mail@v3.7.0
+  #       with:
+  #         # mail server settings
+  #         server_address: smtp.gmail.com
+  #         server_port: 465
+  #         # user credentials
+  #         username: ${{ secrets.EMAIL_USERNAME }}
+  #         password: ${{ secrets.EMAIL_PASSWORD }}
+  #         # email subject
+  #         subject: 🎉 (NEW) Repository Analysis Success - (${{ env.REPO_URL }})
+  #         # email body as text
+  #         body: |
+  #           📝 Analysis: https://github.com/spencerlepine/${{ secrets.CONTRIBUTION_STORE_REPO }}/tree/main/${{ env.REPO_URL }}
+  #           ℹ️ Repository: https://github.com/${{ env.REPO_URL }}
+
+  #           --------------
+
+  #           ♻️ PULL_REQUEST_TEMPLATE: https://github.com/spencerlepine/open-source-crawler-output/issues/1
+  #           🤖 Workflow: https://github.com/spencerlepine/open-source-crawler/actions/runs/${{ github.run_id }}
+  #         # comma-separated string, send email to
+  #         to: spencerlepine26@gmail.com
+  #         # from email name
+  #         from: SpencerBot
