@@ -17,22 +17,17 @@ on:
     - cron:  '15 8 * * 1-5'
 
 jobs:
-  fetch_repo_url:
-    runs-on: ubuntu-latest
-    name: "⏭ Get next repo URL from queue"
-
-    steps:
-      - name: Set environment variables for repository URL found
-        run: |
-          REPOSITORY="gatsbyjs/gatsby"
-          echo "repository=${REPOSITORY}" >> $GITHUB_ENV
-  
   repo_scan:
     needs: [fetch_repo_url]
     name: "🕵️‍♂️ Preform repository scan"
     runs-on: ubuntu-latest
     
     steps:
+      - name: "⏭ Get next repo URL from queue"
+        run: |
+          REPOSITORY="gatsbyjs/gatsby"
+          echo "repository=${REPOSITORY}" >> $GITHUB_ENV
+
       - name: "🕵️‍♂️ Preform repository scan"
         uses: open-source-crawler-test/repo-scan-test@main
         with:
@@ -100,4 +95,4 @@ jobs:
   #         # comma-separated string, send email to
   #         to: spencerlepine26@gmail.com
   #         # from email name
-  #         from: SpencerBot
+  #         from: SpencerBot  
