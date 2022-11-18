@@ -28,6 +28,7 @@ jobs:
           echo "repository=${REPOSITORY}" >> $GITHUB_ENV
 
       - name: "🕵️‍♂️ Preform repository scan"
+        if: ${{ env.repository }}
         uses: open-source-crawler-test/repo-scan-test@main
         with:
           repository: ${{ env.repository }}
