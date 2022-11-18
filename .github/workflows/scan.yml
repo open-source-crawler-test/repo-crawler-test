@@ -18,7 +18,6 @@ on:
 
 jobs:
   repo_scan:
-    needs: [fetch_repo_url]
     name: "🕵️‍♂️ Preform repository scan"
     runs-on: ubuntu-latest
     
