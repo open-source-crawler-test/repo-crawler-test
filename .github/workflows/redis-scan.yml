@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache@v2
         with:
             path: "/usr/bin/bats"
-            key: redis-cli-version
+            key: bats-version
       
       - name: ⬇️ Install bats
         run: |
@@ -54,8 +54,7 @@ jobs:
               sudo apt-get install bats
           fi
 
-      # Execute CRUD operations on RedisDB
-      - name: ⚙️ Run redis shell scripts
+      - name: ⚙️ Execute CRUD operations on RedisDB
         run: |
           cd scripts
           chmod +x redis-test.sh
@@ -63,8 +62,7 @@ jobs:
           # redis-cli -u redis://<host>:<port>/<database-number>
           ./redis-test.sh 127.0.0.1 6379
 
-      # Assert expected data in RedisDB 
-      - name: ✅ Run test scripts
+      - name: ✅ Assert expected data in RedisDB 
         run: bats ./tests/* 127.0.0.1 6379
 
       # - name: "⏭ Get next repo URL from queue"
