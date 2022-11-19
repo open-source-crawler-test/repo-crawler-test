@@ -6,6 +6,8 @@ setup() {
     REDIS_USER='default'
     REDIS_PASS='testPass' 
     REPOSITORY='spencerbot/seeded-repo'
+    CRAWL_QUEUE_KEY='dev-crawl-queue'
+    SCAN_QUEUE_KEY='dev-scan-queue'
 
     # get the containing directory of this file
     # use $BATS_TEST_FILENAME instead of ${BASH_SOURCE[0]} or $0,
@@ -17,7 +19,7 @@ setup() {
 }
 
 @test "should log the crawl and remove from crawl-queue" {
-  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen scan-queue)"
+  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen $SCAN_QUEUE_KEY)"
   [ "$scanQueueLength" -eq 0 ]
 
   # Arrange
@@ -28,7 +30,7 @@ setup() {
   source logCrawlOfRepo.sh $REPOSITORY
   
   # Assert
-  queueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen crawl-queue)"
+  queueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen $CRAWL_QUEUE_KEY)"
   [ "$queueLength" -eq 0 ]
 }
 
@@ -40,9 +42,9 @@ setup() {
   echo $repositoryScannedKeyStatus
   [ "$repositoryScannedKeyStatus" != "true" ]
 
-  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen scan-queue)"
+  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen $SCAN_QUEUE_KEY)"
   [ "$scanQueueLength" -eq 1 ]
 
   # Cleanup
-  redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS LPOP scan-queue
+  redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS LPOP $SCAN_QUEUE_KEY
 }

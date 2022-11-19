@@ -6,6 +6,7 @@ setup() {
     REDIS_USER='default'
     REDIS_PASS='testPass'
     REPOSITORY='spencerbot/seeded-repo'
+    CRAWL_QUEUE_KEY='dev-crawl-queue'
 
     # get the containing directory of this file
     # use $BATS_TEST_FILENAME instead of ${BASH_SOURCE[0]} or $0,
@@ -19,9 +20,9 @@ setup() {
 @test "should have added repository to crawl-queue" {
   source seedCrawlQueue.sh $REPOSITORY
 
-  nextInQueue="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS LPOP crawl-queue)"
+  nextInQueue="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS LPOP $CRAWL_QUEUE_KEY)"
   [ "$nextInQueue" = $REPOSITORY ]
 
-  queueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen crawl-queue)"
+  queueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen $CRAWL_QUEUE_KEY)"
   [ "$queueLength" -eq 0 ]
 }

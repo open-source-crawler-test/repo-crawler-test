@@ -6,9 +6,11 @@ source ./scripts/validateRedisCreds.sh
 # { OUTPUT -> repository string }
 # Fetch the next repository in crawlQueue
 function fetchNextInCrawlQueue {
+    CRAWL_QUEUE_KEY='dev-crawl-queue'
+
     validateRedisCreds $REDIS_HOST $REDIS_PORT $REDIS_USER $REDIS_PASS
 
-    nextRepository=$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS LPOP crawl-queue)
+    nextRepository=$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS LPOP $CRAWL_QUEUE_KEY)
     echo $nextRepository
 }
 

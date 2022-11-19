@@ -6,9 +6,11 @@ source ./scripts/validateRedisCreds.sh
 # { OUTPUT -> repository string }
 # Fetch the next repository in scanQueue
 function fetchNextInScanQueue {
+    SCAN_QUEUE_KEY='dev-scan-queue'
+
     validateRedisCreds $REDIS_HOST $REDIS_PORT $REDIS_USER $REDIS_PASS
 
-    nextRepository=$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS LPOP scan-queue)
+    nextRepository=$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS LPOP $SCAN_QUEUE_KEY)
     echo $nextRepository
 }
 

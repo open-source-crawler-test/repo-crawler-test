@@ -11,6 +11,7 @@ setup() {
     REDIS_USER='default'
     REDIS_PASS='testPass' 
     REPOSITORY='spencerbot/seeded-repo'
+    SCAN_QUEUE_KEY='dev-scan-queue'
 
     # get the containing directory of this file
     # use $BATS_TEST_FILENAME instead of ${BASH_SOURCE[0]} or $0,
@@ -21,8 +22,8 @@ setup() {
     PATH="$DIR/../scripts:$PATH"
 }
 
-@test "should log the crawl and remove from scan-queue" {
-  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen scan-queue)"
+@test "should log the crawl and remove from $SCAN_QUEUE_KEY" {
+  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen $SCAN_QUEUE_KEY)"
   [ "$scanQueueLength" -eq 0 ]
 
   # Arrange
@@ -35,7 +36,7 @@ setup() {
   source logScanOfRepo.sh $REPOSITORY
 
   # Assert
-  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen scan-queue)"
+  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen $SCAN_QUEUE_KEY)"
   [ "$scanQueueLength" -eq 0 ]
 }
 
@@ -46,6 +47,6 @@ setup() {
   repositoryScannedKeyStatus="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS HGET $REPOSITORY hasBeenScanned )"
   [ "$repositoryScannedKeyStatus" = "true" ]
 
-  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen scan-queue)"
+  scanQueueLength="$(redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS llen $SCAN_QUEUE_KEY)"
   [ "$scanQueueLength" -eq 0 ]
 }
