@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   push:
 
+env:
+  REDIS_HOST: ${{ secrets.REDIS_HOST }}
+  REDIS_PASS: ${{ secrets.REDIS_PASS }}
+  REDIS_USER: ${{ secrets.REDIS_USER }}
+
 jobs:
   repo_scan:
     name: "🕵️‍♂️ Preform repository scan"
@@ -27,6 +32,8 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+
+      - run: sudo chmod -R a+rwx /usr/local
 
       - name: Cache redis-cli
         uses: actions/cache@v2
@@ -57,11 +64,10 @@ jobs:
       - name: ⚙️ Execute CRUD operations on RedisDB
         run: |
           chmod +x ./scripts/redis-test.sh
-          REDIS_HOST='127.0.0.1' REDIS_PORT='6379' REDIS_USER='myUser' REDIS_PASS='myPass' ./scripts/redis-test.sh 127.0.0.1 6379
+          REDIS_HOST=${{ env.REDIS_HOST }} REDIS_PORT=${{ env.REDIS_PORT }} REDIS_USER=${{ env.REDIS_USER }} REDIS_PASS=${{ env.REDIS_PASS }} ./scripts/redis-test.sh
 
       - name: ✅ Assert expected data in RedisDB 
-        run: |
-          REDIS_HOST='127.0.0.1' REDIS_PORT='6379' REDIS_USER='myUser' REDIS_PASS='myPass' bats ./tests/*
+        run: REDIS_HOST=${{ env.REDIS_HOST }} REDIS_PORT=${{ env.REDIS_PORT }} REDIS_USER=${{ env.REDIS_USER }} REDIS_PASS=${{ env.REDIS_PASS }} bats ./tests/*
 
       # - name: "⏭ Get next repo URL from queue"
       #   run: |
