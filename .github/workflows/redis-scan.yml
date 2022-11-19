@@ -26,7 +26,7 @@ jobs:
           - 6379:6379
     
     steps:
-      - uses: action/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Run redis shell scripts
         run: |
