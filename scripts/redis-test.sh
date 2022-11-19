@@ -8,7 +8,7 @@ redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS set cat-count 10
 
 redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS get cat-count
 
-
+# https://lightrun.com/using-the-redis-command-line/
 
 # redis-cli -h $REDIS_HOST -p $REDIS_PORT -a '' ping
 
