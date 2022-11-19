@@ -12,4 +12,5 @@ function fetchNextInCrawlQueue {
     echo $nextRepository
 }
 
-fetchNextInCrawlQueue $1
+result=$(fetchNextInCrawlQueue $1)
+echo $result

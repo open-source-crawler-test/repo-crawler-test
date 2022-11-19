@@ -1,43 +1,90 @@
-name: 🧐 Repo Analyzer
+name: 🧐 Repo Scan CRON
 
 on:
-  workflow_dispatch:
-  # # Run job At 08:15 on every day-of-week from Monday through Friday.
-  # schedule:
-  #             # https://crontab.guru/
-  #             #   ┌───────────── minute (0 - 59)
-  #             # │ ┌───────────── hour (0 - 23)
-  #             # │ │ ┌───────────── day of the month (1 - 31)
-  #             # │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
-  #             # │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)
-  #             # │ │ │ │ │
-  #             # │ │ │ │ │
-  #             # │ │ │ │ │
-  #             # * * * * *
-  #   - cron:  '15 8 * * 1-5'
+  # Run job At 08:15 on every day-of-week from Monday through Friday.
+  schedule:
+              # https://crontab.guru/
+              #   ┌───────────── minute (0 - 59)
+              # │ ┌───────────── hour (0 - 23)
+              # │ │ ┌───────────── day of the month (1 - 31)
+              # │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+              # │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)
+              # │ │ │ │ │
+              # │ │ │ │ │
+              # │ │ │ │ │
+              # * * * * *
+    - cron:  '15 8 * * 1-5'
+
+env:
+  REDIS_HOST: ${{ secrets.REDIS_HOST }}
+  REDIS_PORT: ${{ secrets.REDIS_PORT }}
+  REDIS_PASS: ${{ secrets.REDIS_PASS }}
+  REDIS_USER: ${{ secrets.REDIS_USER }}
+  ARCHIVE_REPO_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+  typo-scan-exclude-match: '[''typos/**'', ''public/**'']'
+  REPORT_ARCHIVE_OWNER: open-source-crawler-test
+  REPORT_ARCHIVE_REPO: repo-scan-archive-test
+  ARCHIVE_REPO_BRANCH_TARGET: main
+  ARCHIVE_COMMIT_EMAIL: commit-bot@gmail.com
 
 jobs:
   repo_scan:
-    name: "🕵️‍♂️ Preform repository scan"
+    name: "🕵️‍♂️ Preform manual repository scan"
     runs-on: ubuntu-latest
     
     steps:
-      - name: "⏭ Get next repo URL from queue"
+      - uses: actions/checkout@v3
+
+      - name: Cache redis-cli
+        uses: actions/cache@v2
+        with:
+            path: "/usr/bin/redis-cli"
+            key: redis-cli-version
+
+      - name: ⬇️ Install redis-cli
         run: |
-          REPOSITORY="gatsbyjs/gatsby"
+          if ! command -v redis-cli &> /dev/null
+          then
+              sudo apt-get install redis
+          fi
+
+      - name: Cache bats
+        uses: actions/cache@v2
+        with:
+            path: "/usr/bin/bats"
+            key: bats-version
+      
+      - name: ⬇️ Install bats
+        run: |
+          if ! command -v bats &> /dev/null
+          then
+              sudo apt-get install bats
+          fi
+
+      - name: "🫣 Fetch the next repository from crawl queue
+        run: |
+          REPOSITORY=$(./scripts/fetchNextInScanQueue.sh )
           echo "repository=${REPOSITORY}" >> $GITHUB_ENV
+
+      - name: 📑 Log this repository scan 
+        run: |
+          chmod -R +rwx scripts
+          export REDIS_HOST="${{ env.REDIS_HOST }}"
+          export REDIS_PORT"${{ env.REDIS_PORT }}"
+          export REDIS_USER="${{ env.REDIS_USER }}"
+          export REDIS_PASS="${{ env.REDIS_PASS }}"
+          ./scripts/logScanOfRepo.sh ${{ env.repository }}
 
       - name: "🕵️‍♂️ Preform repository scan"
         if: ${{ env.repository }}
         uses: open-source-crawler-test/repo-scan-test@main
         with:
           repository: ${{ env.repository }}
-          typo-scan-exclude-match: '[''typos/**'', ''public/**'']'
-          REPORT_ARCHIVE_OWNER: open-source-crawler-test
-          REPORT_ARCHIVE_REPO: repo-scan-archive-test
-          ARCHIVE_REPO_BRANCH_TARGET: main
-          ARCHIVE_COMMIT_EMAIL: commit-bot@gmail.com
-          ARCHIVE_REPO_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          typo-scan-exclude-match: ${{ env.typo-scan-exclude-match }}
+          REPORT_ARCHIVE_REPO: ${{ env.REPORT_ARCHIVE_REPO }}
+          ARCHIVE_REPO_BRANCH_TARGET: ${{ env.ARCHIVE_REPO_BRANCH_TARGET }}
+          ARCHIVE_COMMIT_EMAIL: ${{ env.ARCHIVE_COMMIT_EMAIL }}
+          ARCHIVE_REPO_ACCESS_TOKEN: ${{ env.ARCHIVE_REPO_ACCESS_TOKEN }}
           
   # email_notification:
   #   needs: [fetch_repo_url, repo_scan]

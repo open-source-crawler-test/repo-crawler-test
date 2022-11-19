@@ -1,7 +1,11 @@
-name: CI
+name: 🧐 Repo Scan Manual
 
 on:
-  push:
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: <user>/<name> of repository to scan
+        required: true
 
 env:
   REDIS_HOST: ${{ secrets.REDIS_HOST }}
@@ -16,20 +20,9 @@ env:
   ARCHIVE_COMMIT_EMAIL: commit-bot@gmail.com
 
 jobs:
-  redis_bash_ci:
-    name: "Run unit tests"
+  repo_scan:
+    name: "🕵️‍♂️ Preform manual repository scan"
     runs-on: ubuntu-latest
-
-    services:
-      redis:
-        image: redis
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
     
     steps:
       - uses: actions/checkout@v3
@@ -60,13 +53,19 @@ jobs:
               sudo apt-get install bats
           fi
 
-      - name: ✅ run unit and RedisDB integration tests
-        run: REDIS_HOST=${{ env.REDIS_HOST }} REDIS_PORT=${{ env.REDIS_PORT }} REDIS_USER=${{ env.REDIS_USER }} REDIS_PASS=${{ env.REDIS_PASS }} bats ./__tests__/*
-
-      - name: "⏭ Get (mock) next repo URL from queue"
+      - name: "🫣 Parse the input repository
         run: |
-          REPOSITORY="gatsbyjs/gatsby"
+          REPOSITORY="${{ inputs.repository }}"
           echo "repository=${REPOSITORY}" >> $GITHUB_ENV
+
+      - name: 📑 Log this repository scan 
+        run: |
+          chmod -R +rwx scripts
+          export REDIS_HOST="${{ env.REDIS_HOST }}"
+          export REDIS_PORT"${{ env.REDIS_PORT }}"
+          export REDIS_USER="${{ env.REDIS_USER }}"
+          export REDIS_PASS="${{ env.REDIS_PASS }}"
+          ./scripts/logScanOfRepo.sh ${{ env.repository }}
 
       - name: "🕵️‍♂️ Preform repository scan"
         if: ${{ env.repository }}

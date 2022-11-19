@@ -12,4 +12,5 @@ function fetchNextInScanQueue {
     echo $nextRepository
 }
 
-fetchNextInScanQueue $1
+result=$(fetchNextInScanQueue $1)
+echo $result
