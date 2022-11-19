@@ -61,7 +61,7 @@ jobs:
               sudo apt-get install bats
           fi
 
-      - name: "🫣 Fetch the next repository from crawl queue
+      - name: "🫣 Fetch the next repository from crawl queue"
         run: |
           REPOSITORY=$(./scripts/fetchNextInScanQueue.sh )
           echo "repository=${REPOSITORY}" >> $GITHUB_ENV
