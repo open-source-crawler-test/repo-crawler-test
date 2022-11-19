@@ -73,6 +73,7 @@ jobs:
         with:
           repository: ${{ env.repository }}
           typo-scan-exclude-match: ${{ env.typo-scan-exclude-match }}
+          REPORT_ARCHIVE_OWNER: ${{ env.REPORT_ARCHIVE_OWNER }}
           REPORT_ARCHIVE_REPO: ${{ env.REPORT_ARCHIVE_REPO }}
           ARCHIVE_REPO_BRANCH_TARGET: ${{ env.ARCHIVE_REPO_BRANCH_TARGET }}
           ARCHIVE_COMMIT_EMAIL: ${{ env.ARCHIVE_COMMIT_EMAIL }}
