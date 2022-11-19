@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: sudo chmod -R a+rwx /usr/local
+      - run: sudo chmod -rwx /usr/local/tar
 
       - name: Cache redis-cli
         uses: actions/cache@v2
