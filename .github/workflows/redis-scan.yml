@@ -28,12 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache redis-cli
-        uses: actions/cache@v2
-        id: cache-redis-cli
+      - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-            path: "~/redis-cli"
-            key: redis-cli-version
+          packages: redis-cli
+          version: 1.0
 
       - name: Install redis-cli
         run: |
