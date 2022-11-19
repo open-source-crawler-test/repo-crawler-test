@@ -56,7 +56,6 @@ jobs:
 
       - name: ⚙️ Execute CRUD operations on RedisDB
         run: |
-          cd scripts
           chmod +x ./scripts/redis-test.sh
           REDIS_HOST='127.0.0.1' REDIS_PORT='6379' REDIS_USER='myUser' REDIS_PASS='myPass' ./scripts/redis-test.sh 127.0.0.1 6379
 
