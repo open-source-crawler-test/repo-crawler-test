@@ -1,16 +1,27 @@
 #!/usr/bin/env bash
 
 # Authenticate
-# redis-cli -u redis://<username>:<password>@<host>:<port>/<database-number>
-# redis-cli -u redis://$1:$2@$3:$4/$5
-# redis://<host>:<port>/<database-number>
-redis-cli -u redis://$1:$2/1
+redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS ping
+
+# Execute RedisDB. Queries
+redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS set cat-count 10
+
+redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASS get cat-count
+
+
+
+# redis-cli -h $REDIS_HOST -p $REDIS_PORT -a '' ping
+
+
+# redis-cli -h $REDIS_HOST -p $REDIS_PORT -a '' ping
+
+# AUTH [username] <password> 
 
 # SET
-redis-cli set cat-count 10
+# redis-cli set cat-count 10
 
 # GET
-echo "$(redis-cli get cat-count)"
+# echo "$(redis-cli get cat-count)"
 
 # UPDATE
 

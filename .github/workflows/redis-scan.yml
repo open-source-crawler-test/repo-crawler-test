@@ -57,13 +57,12 @@ jobs:
       - name: ⚙️ Execute CRUD operations on RedisDB
         run: |
           cd scripts
-          chmod +x redis-test.sh
-          # ./redis-test.sh <username> <password> <host> <port> <database-number>
-          # redis-cli -u redis://<host>:<port>/<database-number>
-          ./redis-test.sh 127.0.0.1 6379
+          chmod +x ./scripts/redis-test.sh
+          REDIS_HOST='127.0.0.1' REDIS_PORT='6379' REDIS_USER='myUser' REDIS_PASS='myPass' ./scripts/redis-test.sh 127.0.0.1 6379
 
       - name: ✅ Assert expected data in RedisDB 
-        run: bats ./tests/* 127.0.0.1 6379
+        run: |
+          REDIS_HOST='127.0.0.1' REDIS_PORT='6379' REDIS_USER='myUser' REDIS_PASS='myPass' bats ./tests/*
 
       # - name: "⏭ Get next repo URL from queue"
       #   run: |
