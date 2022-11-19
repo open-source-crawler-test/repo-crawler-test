@@ -28,8 +28,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Cache redis-cli
+        uses: actions/cache@v2
+        id: cache-redis-cli
+        with:
+            path: "~/redis-cli"
+            key: redis-cli-version
+
       - name: Install redis-cli
-        run: sudo apt-get install redis
+        run: |
+          if ! command -v redis-cli &> /dev/null
+          then
+              sudo apt-get install redis
+          fi
 
       - name: Run redis shell scripts
         run: |

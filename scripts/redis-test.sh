@@ -7,7 +7,7 @@
 redis-cli -u redis://$1:$2/1
 
 # SET
-redis-cli set cat-count 10 OK
+redis-cli set cat-count 10
 
 # GET
 echo "$(redis-cli get cat-count)"
