@@ -28,6 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install redis-cli
+        run: sudo apt-get install redis
+
       - name: Run redis shell scripts
         run: |
           chmod +x scripts/redis-test.sh
