@@ -28,12 +28,13 @@ jobs:
     steps:
       - uses: action/checkout@v3
 
-      - run: |
-        chmod +x scripts/redis-test.sh
-        cd scripts
-        # ./redis-test.sh <username> <password> <host> <port> <database-number>
-        # redis-cli -u redis://<host>:<port>/<database-number>
-        ./redis-test.sh 127.0.0.1 6379
+      - name: Run redis shell scripts
+        run: |
+          chmod +x scripts/redis-test.sh
+          cd scripts
+          # ./redis-test.sh <username> <password> <host> <port> <database-number>
+          # redis-cli -u redis://<host>:<port>/<database-number>
+          ./redis-test.sh 127.0.0.1 6379
 
       - name: "⏭ Get next repo URL from queue"
         run: |
