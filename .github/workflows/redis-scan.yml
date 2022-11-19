@@ -33,8 +33,8 @@ jobs:
 
       - name: Run redis shell scripts
         run: |
-          chmod +x scripts/redis-test.sh
           cd scripts
+          chmod +x redis-test.sh
           # ./redis-test.sh <username> <password> <host> <port> <database-number>
           # redis-cli -u redis://<host>:<port>/<database-number>
           ./redis-test.sh 127.0.0.1 6379
