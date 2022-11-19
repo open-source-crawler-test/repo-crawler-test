@@ -1,33 +1,34 @@
-name: 🧐 Repo Analyzer
+name: CI
 
 on:
-  workflow_dispatch:
   push:
 
 env:
   REDIS_HOST: ${{ secrets.REDIS_HOST }}
+  REDIS_PORT: ${{ secrets.REDIS_PORT }}
   REDIS_PASS: ${{ secrets.REDIS_PASS }}
   REDIS_USER: ${{ secrets.REDIS_USER }}
+  ARCHIVE_REPO_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+  typo-scan-exclude-match: '[''typos/**'', ''public/**'']'
+  REPORT_ARCHIVE_OWNER: open-source-crawler-test
+  REPORT_ARCHIVE_REPO: repo-scan-archive-test
+  ARCHIVE_REPO_BRANCH_TARGET: main
+  ARCHIVE_COMMIT_EMAIL: commit-bot@gmail.com
 
 jobs:
-  repo_scan:
-    name: "🕵️‍♂️ Preform repository scan"
+  redis_bash_ci:
+    name: "Run unit tests"
     runs-on: ubuntu-latest
 
-    # Service containers to run with `container-job`
     services:
-      # Label used to access the service container
       redis:
-        # Docker Hub image
         image: redis
-        # Set health checks to wait until redis has started
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          # Maps port 6379 on service container to the host
           - 6379:6379
     
     steps:
@@ -59,27 +60,21 @@ jobs:
               sudo apt-get install bats
           fi
 
-      - name: ⚙️ Execute CRUD operations on RedisDB
-        run: |
-          chmod +x ./scripts/redis-test.sh
-          REDIS_HOST=${{ env.REDIS_HOST }} REDIS_PORT=${{ env.REDIS_PORT }} REDIS_USER=${{ env.REDIS_USER }} REDIS_PASS=${{ env.REDIS_PASS }} ./scripts/redis-test.sh
-
-      - name: ✅ Assert expected data in RedisDB 
+      - name: ✅ run unit and RedisDB integration tests
         run: REDIS_HOST=${{ env.REDIS_HOST }} REDIS_PORT=${{ env.REDIS_PORT }} REDIS_USER=${{ env.REDIS_USER }} REDIS_PASS=${{ env.REDIS_PASS }} bats ./tests/*
 
-      # - name: "⏭ Get next repo URL from queue"
-      #   run: |
-      #     REPOSITORY="gatsbyjs/gatsby"
-      #     echo "repository=${REPOSITORY}" >> $GITHUB_ENV
+      - name: "⏭ Get (mock) next repo URL from queue"
+        run: |
+          REPOSITORY="gatsbyjs/gatsby"
+          echo "repository=${REPOSITORY}" >> $GITHUB_ENV
 
-      # - name: "🕵️‍♂️ Preform repository scan"
-      #   if: ${{ env.repository }}
-      #   uses: open-source-crawler-test/repo-scan-test@main
-      #   with:
-      #     repository: ${{ env.repository }}
-      #     typo-scan-exclude-match: '[''typos/**'', ''public/**'']'
-      #     REPORT_ARCHIVE_OWNER: open-source-crawler-test
-      #     REPORT_ARCHIVE_REPO: repo-scan-archive-test
-      #     ARCHIVE_REPO_BRANCH_TARGET: main
-      #     ARCHIVE_COMMIT_EMAIL: commit-bot@gmail.com
-      #     ARCHIVE_REPO_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: "🕵️‍♂️ Preform repository scan"
+        if: ${{ env.repository }}
+        uses: open-source-crawler-test/repo-scan-test@main
+        with:
+          repository: ${{ env.repository }}
+          typo-scan-exclude-match: ${{ env.typo-scan-exclude-match }}
+          REPORT_ARCHIVE_REPO: ${{ env.REPORT_ARCHIVE_REPO }}
+          ARCHIVE_REPO_BRANCH_TARGET: ${{ env.ARCHIVE_REPO_BRANCH_TARGET }}
+          ARCHIVE_COMMIT_EMAIL: ${{ env.ARCHIVE_COMMIT_EMAIL }}
+          ARCHIVE_REPO_ACCESS_TOKEN: ${{ env.ARCHIVE_REPO_ACCESS_TOKEN }}
