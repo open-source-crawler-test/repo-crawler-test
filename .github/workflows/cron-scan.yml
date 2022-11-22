@@ -65,7 +65,7 @@ jobs:
       - name: "🫣 Fetch the next repository from crawl queue"
         run: |
           REPOSITORY=$(./scripts/fetchNextInScanQueue.sh )
-          echo "repository={$REPOSITORY}" >> $GITHUB_ENV
+          echo "repository=$REPOSITORY" >> $GITHUB_ENV
 
       - name: 📑 Log this repository scan 
         run: |

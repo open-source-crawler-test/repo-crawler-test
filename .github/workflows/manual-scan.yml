@@ -56,7 +56,7 @@ jobs:
       - name: "🫣 Parse the input repository"
         run: |
           REPOSITORY="${{ inputs.repository }}"
-          echo "repository={$REPOSITORY}" >> $GITHUB_ENV
+          echo "repository=$REPOSITORY" >> $GITHUB_ENV
 
       - name: 📑 Log this repository scan 
         run: |
@@ -71,7 +71,7 @@ jobs:
         if: ${{ env.repository }}
         uses: open-source-crawler-test/repo-scan-test@main
         with:
-          repository: ${{ env.repository }}
+          repository: ${{ inputs.repository }}
           typo-scan-exclude-match: ${{ env.typo-scan-exclude-match }}
           REPORT_ARCHIVE_OWNER: ${{ env.REPORT_ARCHIVE_OWNER }}
           REPORT_ARCHIVE_REPO: ${{ env.REPORT_ARCHIVE_REPO }}
