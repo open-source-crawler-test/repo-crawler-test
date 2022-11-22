@@ -2,6 +2,7 @@ name: 🧐 Repo Scan CRON
 
 on:
   # Run job At 08:15 on every day-of-week from Monday through Friday.
+  # TODO
   schedule:
               # https://crontab.guru/
               #   ┌───────────── minute (0 - 59)
