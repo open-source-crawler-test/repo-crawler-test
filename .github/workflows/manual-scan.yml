@@ -56,7 +56,7 @@ jobs:
       - name: "🫣 Parse the input repository"
         run: |
           REPOSITORY="${{ inputs.repository }}"
-          echo "repository=${REPOSITORY}" >> $GITHUB_ENV
+          echo "repository={$REPOSITORY}" >> $GITHUB_ENV
 
       - name: 📑 Log this repository scan 
         run: |
