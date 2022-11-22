@@ -1,0 +1,48 @@
+name: 📄🔎 Debug RedisDB
+
+on:
+  workflow_dispatch:
+
+env:
+  REDIS_HOST: ${{ secrets.REDIS_HOST }}
+  REDIS_PORT: ${{ secrets.REDIS_PORT }}
+  REDIS_PASS: ${{ secrets.REDIS_PASS }}
+  REDIS_USER: ${{ secrets.REDIS_USER }}
+
+jobs:
+  redis_debug:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache redis-cli
+        uses: actions/cache@v3
+        with:
+            path: "/usr/bin/redis-cli"
+            key: redis-cli-version
+
+      - name: ⬇️ Install redis-cli
+        run: |
+          if ! command -v redis-cli &> /dev/null
+          then
+              sudo apt-get install redis
+          fi
+
+      - name: "➕ Add repository to crawl queue"
+        run: |
+          chmod -R +rwx scripts
+          export REDIS_HOST="${{ env.REDIS_HOST }}"
+          export REDIS_PORT"${{ env.REDIS_PORT }}"
+          export REDIS_USER="${{ env.REDIS_USER }}"
+          export REDIS_PASS="${{ env.REDIS_PASS }}"
+          ./scripts/generateRedisDebugLog.sh
+
+      - name: "✏️ Output redis debug to JOB_SUMMARY"
+        run: cat REDIS_DEBUG_LOG.md >> $GITHUB_STEP_SUMMARY || true
+      
+      - name: "⬆️ Upload Redis Debug Log"
+        uses: actions/upload-artifact@v3
+        with:
+          name: redis-debug-log
+          path: REDIS_DEBUG_LOG.md
