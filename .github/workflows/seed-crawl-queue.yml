@@ -21,6 +21,12 @@ on:
   #             # * * * * *
   #   - cron:  '0 8 * * 1-5'
 
+env:
+  REDIS_HOST: ${{ secrets.REDIS_HOST }}
+  REDIS_PORT: ${{ secrets.REDIS_PORT }}
+  REDIS_PASS: ${{ secrets.REDIS_PASS }}
+  REDIS_USER: ${{ secrets.REDIS_USER }}
+
 jobs:
   seed_crawl_queue:
     runs-on: ubuntu-latest
