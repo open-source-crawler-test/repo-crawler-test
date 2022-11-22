@@ -1,4 +1,4 @@
-name: 👉 Repo Scan Manual
+name: 🤖🕵️‍♂️ Repo Scan Manual
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ env:
   REDIS_PASS: ${{ secrets.REDIS_PASS }}
   REDIS_USER: ${{ secrets.REDIS_USER }}
   ARCHIVE_REPO_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-  typo-scan-exclude-match: '[''typos/**'', ''public/**'']'
+  typo-scan-exclude-match: '[''typos-report/**'', ''public/**'']'
   REPORT_ARCHIVE_OWNER: open-source-crawler-test
   REPORT_ARCHIVE_REPO: repo-scan-archive-test
   ARCHIVE_REPO_BRANCH_TARGET: main
@@ -38,19 +38,6 @@ jobs:
           if ! command -v redis-cli &> /dev/null
           then
               sudo apt-get install redis
-          fi
-
-      - name: Cache bats
-        uses: actions/cache@v3
-        with:
-            path: "/usr/bin/bats"
-            key: bats-version
-      
-      - name: ⬇️ Install bats
-        run: |
-          if ! command -v bats &> /dev/null
-          then
-              sudo apt-get install bats
           fi
 
       - name: "🫣 Parse the input repository"

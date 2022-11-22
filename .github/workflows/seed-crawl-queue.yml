@@ -1,4 +1,4 @@
-name: 🕷️ Repo Crawler
+name: 🌱 Seed Crawl Queue
 
 on:
   workflow_dispatch:
@@ -42,4 +42,10 @@ jobs:
           fi
 
       - name: "➕ Add repository to crawl queue"
-        run: ./scripts/seedCrawlQueue.sh ${{ inputs.repository }}
+        run: |
+          chmod -R +rwx scripts
+          export REDIS_HOST="${{ env.REDIS_HOST }}"
+          export REDIS_PORT"${{ env.REDIS_PORT }}"
+          export REDIS_USER="${{ env.REDIS_USER }}"
+          export REDIS_PASS="${{ env.REDIS_PASS }}"
+          ./scripts/seedCrawlQueue.sh ${{ inputs.repository }}
