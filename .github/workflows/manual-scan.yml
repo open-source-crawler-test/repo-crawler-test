@@ -42,17 +42,16 @@ jobs:
 
       - name: "🫣 Parse the input repository"
         run: |
-          REPOSITORY="${{ inputs.repository }}"
-          echo "repository=$REPOSITORY" >> $GITHUB_ENV
-
-      - name: 📑 Log this repository scan 
-        run: |
           chmod -R +rwx scripts
           export REDIS_HOST="${{ env.REDIS_HOST }}"
           export REDIS_PORT"${{ env.REDIS_PORT }}"
           export REDIS_USER="${{ env.REDIS_USER }}"
           export REDIS_PASS="${{ env.REDIS_PASS }}"
-          ./scripts/logScanOfRepo.sh ${{ env.repository }}
+          REPOSITORY="${{ inputs.repository }}"
+          echo "repository=$REPOSITORY" >> $GITHUB_ENV
+
+      - name: 📑 Log this repository scan 
+        run: ./scripts/logScanOfRepo.sh ${{ env.repository }}
 
       - name: "🕵️‍♂️ Preform repository scan"
         if: ${{ env.repository }}

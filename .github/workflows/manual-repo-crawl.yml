@@ -36,17 +36,16 @@ jobs:
 
       - name: "🫣 Fetch the next repository from crawl queue"
         run: |
-          REPOSITORY=${{ inputs.repository }}
-          echo "repository=$REPOSITORY" >> $GITHUB_ENV
-
-      - name: 📑 Log this repository scan 
-        run: |
           chmod -R +rwx scripts
           export REDIS_HOST="${{ env.REDIS_HOST }}"
           export REDIS_PORT"${{ env.REDIS_PORT }}"
           export REDIS_USER="${{ env.REDIS_USER }}"
           export REDIS_PASS="${{ env.REDIS_PASS }}"
-          ./scripts/logCrawlOfRepo.sh ${{ env.repository }}
+          REPOSITORY=${{ inputs.repository }}
+          echo "repository=$REPOSITORY" >> $GITHUB_ENV
+
+      - name: 📑 Log this repository scan 
+        run: ./scripts/logCrawlOfRepo.sh ${{ env.repository }}
 
       - name: "🕷 Preform repository crawl"
         run: ./scripts/executeRepositoryWebCrawl.sh ${{ env.repository }}
