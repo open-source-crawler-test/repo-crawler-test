@@ -1,5 +1,4 @@
 name: ⏰🕵️‍♂️ Repo Scan CRON
-description: CRON job that pulls next URL from scan queue, validates the repository, and preforms scans with various composite actions. 
 
 on:
   workflow_dispatch:
