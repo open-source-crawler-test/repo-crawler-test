@@ -1,4 +1,4 @@
-name: 🤖🕵️🕷 Web Crawler Manual
+name: 🤖🕷 Web Crawler Manual
 
 on:
   workflow_dispatch:
