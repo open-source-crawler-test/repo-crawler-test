@@ -49,7 +49,7 @@ setup() {
 @test "should accept valid repository input" {
     source validateRepoUrlInput.sh
     run validateRepoUrlInput "spencerlepine/test-repo-name"
-    assert_output 'Repository is valid'
+    assert_output ''
 }
 
 @test "should reject undefined redis creds input" {
@@ -66,5 +66,5 @@ setup() {
 @test "should accept valid redis cred input" {
     source validateRedisCreds.sh
     run validateRedisCreds "SOMEHOST" "SOMEPORT" "SOMEUSER" "SOMEPASS"
-    assert_output 'Redis credentials are valid'
+    assert_output ''
 }

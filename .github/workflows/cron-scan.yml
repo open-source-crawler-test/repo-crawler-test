@@ -31,7 +31,7 @@ env:
 
 jobs:
   repo_scan:
-    name: "🕵️‍♂️ Preform manual repository scan"
+    name: "🕵️‍♂️ Preform repository scan"
     runs-on: ubuntu-latest
     
     steps:
