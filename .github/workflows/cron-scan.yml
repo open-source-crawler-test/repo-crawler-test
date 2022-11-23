@@ -1,4 +1,5 @@
 name: ⏰🕵️‍♂️ Repo Scan CRON
+description: CRON job that pulls next URL from scan queue, validates the repository, and preforms scans with various composite actions. 
 
 on:
   workflow_dispatch:
@@ -59,7 +60,7 @@ jobs:
           export REDIS_PASS="${{ env.REDIS_PASS }}"
           REPOSITORY=$(./scripts/fetchNextInScanQueue.sh)
           echo $REPOSITORY
-          echo "repository={$REPOSITORY" >> $GITHUB_ENV
+          echo "repository=$REPOSITORY" >> $GITHUB_ENV
 
       - name: 📑 Log this repository scan 
         run: ./scripts/logScanOfRepo.sh ${{ env.repository }}
