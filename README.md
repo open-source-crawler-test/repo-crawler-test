@@ -1,5 +1,11 @@
 # Repository Scanning Web Crawler [![CI](https://github.com/open-source-crawler-test/repo-crawler-test/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/open-source-crawler-test/repo-crawler-test/actions/workflows/ci.yml)
 
+
+- ⚠️ Finish `# TODO` items
+- Validate cannot scan twice
+- Validate cannot crawl twice
+- `./scripts/executeRepositoryWebCrawl.sh open-source-crawler-test/repo-known-bad`
+
 ## Usage
 
 

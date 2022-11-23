@@ -1,4 +1,4 @@
-name: 🌱 Seed Crawl Queue
+name: 🤖🕵️🕷 Web Crawler Manual
 
 on:
   workflow_dispatch:
@@ -14,9 +14,10 @@ env:
   REDIS_USER: ${{ secrets.REDIS_USER }}
 
 jobs:
-  seed_crawl_queue:
+  repo_crawl:
+    name: "🕵️‍♂️ Preform manual repository web crawl"
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v3
 
@@ -33,11 +34,19 @@ jobs:
               sudo apt-get install redis
           fi
 
-      - name: "➕ Add repository to crawl queue"
+      - name: "🫣 Fetch the next repository from crawl queue"
+        run: |
+          REPOSITORY=${{ inputs.repository }}
+          echo "repository=$REPOSITORY" >> $GITHUB_ENV
+
+      - name: 📑 Log this repository scan 
         run: |
           chmod -R +rwx scripts
           export REDIS_HOST="${{ env.REDIS_HOST }}"
           export REDIS_PORT"${{ env.REDIS_PORT }}"
           export REDIS_USER="${{ env.REDIS_USER }}"
           export REDIS_PASS="${{ env.REDIS_PASS }}"
-          ./scripts/seedCrawlQueue.sh ${{ inputs.repository }}
+          ./scripts/logCrawlOfRepo.sh ${{ env.repository }}
+
+      - name: "🕷 Preform repository crawl"
+        run: ./scripts/executeRepositoryWebCrawl.sh ${{ env.repository }}

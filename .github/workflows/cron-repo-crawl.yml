@@ -1,4 +1,4 @@
-name: ⏰🕵️‍♂️ Repo Scan CRON
+name: ⏰🕷 Web Crawler CRON
 
 on:
   # Run job At 08:15 on every day-of-week from Monday through Friday.
@@ -21,16 +21,10 @@ env:
   REDIS_PORT: ${{ secrets.REDIS_PORT }}
   REDIS_PASS: ${{ secrets.REDIS_PASS }}
   REDIS_USER: ${{ secrets.REDIS_USER }}
-  ARCHIVE_REPO_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-  typo-scan-exclude-match: '[''typos-report/**'', ''public/**'']'
-  REPORT_ARCHIVE_OWNER: open-source-crawler-test
-  REPORT_ARCHIVE_REPO: repo-scan-archive-test
-  ARCHIVE_REPO_BRANCH_TARGET: main
-  ARCHIVE_COMMIT_EMAIL: commit-bot@gmail.com
 
 jobs:
-  repo_scan:
-    name: "🕵️‍♂️ Preform manual repository scan"
+  repo_crawl:
+    name: "🕵️‍♂️ Preform repository web crawl"
     runs-on: ubuntu-latest
     
     steps:
@@ -51,7 +45,7 @@ jobs:
 
       - name: "🫣 Fetch the next repository from crawl queue"
         run: |
-          REPOSITORY=$(./scripts/fetchNextInScanQueue.sh )
+          REPOSITORY=$(./scripts/fetchNextInCrawlQueue.sh )
           echo "repository=$REPOSITORY" >> $GITHUB_ENV
 
       - name: 📑 Log this repository scan 
@@ -61,16 +55,7 @@ jobs:
           export REDIS_PORT"${{ env.REDIS_PORT }}"
           export REDIS_USER="${{ env.REDIS_USER }}"
           export REDIS_PASS="${{ env.REDIS_PASS }}"
-          ./scripts/logScanOfRepo.sh ${{ env.repository }}
+          ./scripts/logCrawlOfRepo.sh ${{ env.repository }}
 
-      - name: "🕵️‍♂️ Preform repository scan"
-        if: ${{ env.repository }}
-        uses: open-source-crawler-test/repo-scan-test@main
-        with:
-          repository: ${{ env.repository }}
-          typo-scan-exclude-match: ${{ env.typo-scan-exclude-match }}
-          REPORT_ARCHIVE_OWNER: ${{ env.REPORT_ARCHIVE_OWNER }}
-          REPORT_ARCHIVE_REPO: ${{ env.REPORT_ARCHIVE_REPO }}
-          ARCHIVE_REPO_BRANCH_TARGET: ${{ env.ARCHIVE_REPO_BRANCH_TARGET }}
-          ARCHIVE_COMMIT_EMAIL: ${{ env.ARCHIVE_COMMIT_EMAIL }}
-          ARCHIVE_REPO_ACCESS_TOKEN: ${{ env.ARCHIVE_REPO_ACCESS_TOKEN }}
+      - name: "🕷 Preform repository crawl"
+        run: ./scripts/executeRepositoryWebCrawl.sh ${{ env.repository }}
