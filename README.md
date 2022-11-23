@@ -1,13 +1,20 @@
 # Repository Scanning Web Crawler [![CI](https://github.com/open-source-crawler-test/repo-crawler-test/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/open-source-crawler-test/repo-crawler-test/actions/workflows/ci.yml)
 
+Web crawler and repository source code scanner running `bash scripts` via `GitHub Actions` and storing URLs in `RedisDB`. Includes unit tests for bash script logic using the `bats` framework.
 
+```yml
 - ⚠️ Finish `# TODO` items
-- Validate cannot scan twice
-- Validate cannot crawl twice
+- TEST Validate cannot scan twice
+- TEST Validate cannot crawl twice
 - `./scripts/executeRepositoryWebCrawl.sh open-source-crawler-test/repo-known-bad`
+- Find and replace all `$CRAWL_QUEUE_KEY` values
+```
 
 ## Usage
 
+To set up your own web/repo crawler, you can fork this entire repo, updates repository secrets, and view the reports generated in a second repo you create.
+
+> Prerequisite: Running RedisDB, and a second empty GitHub repository (eg. *my-scan-ouput-repo*)
 
 1. Fork this entire repository
 2. Set up a Redis database, save the credentials
