@@ -58,7 +58,8 @@ jobs:
           export REDIS_USER="${{ env.REDIS_USER }}"
           export REDIS_PASS="${{ env.REDIS_PASS }}"
           REPOSITORY=$(./scripts/fetchNextInScanQueue.sh)
-          echo "repository=$REPOSITORY" >> $GITHUB_ENV
+          echo $REPOSITORY
+          echo "repository={$REPOSITORY" >> $GITHUB_ENV
 
       - name: 📑 Log this repository scan 
         run: ./scripts/logScanOfRepo.sh ${{ env.repository }}
